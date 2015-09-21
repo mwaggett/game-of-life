@@ -1,16 +1,25 @@
-# Application Name
+# Conway's Game of Life ~UNFINISHED~
 
-##### _{Brief description of application}, {Date of current version}_
+##### _JavaScript practice, 21 September 2015_
 
 #### By **Molly Waggett**
 
 ## Description
+~UNFINISHED~
 
-{This is a detailed description of your application. Give as much detail as needed to explain what the application does, and any other information you want users or other developers to have. Do you want other developers to use this code in their apps? Talk about things like that here in simple terms.}
+"The universe of the Game of Life is an infinite two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, alive [pink] or dead [black]. Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
+Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+Any live cell with two or three live neighbours lives on to the next generation.
+Any live cell with more than three live neighbours dies, as if by overcrowding.
+Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction."
 
-## Setup
+--https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+
+<!-- ## Setup
 
 * Clone this repository.
+* Open the index.html file in your browser.
+* Go! -->
 
 ## Technologies Used
 
