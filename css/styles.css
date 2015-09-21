@@ -1,0 +1,17 @@
+table, tr, td {
+  border: 2px solid white;
+  border-collapse: collapse;
+}
+
+td {
+  width: 40px;
+  height: 40px;
+}
+
+.live {
+  background: pink;
+}
+
+.dead {
+  background: black;
+}
