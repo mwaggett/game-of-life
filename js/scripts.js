@@ -13,7 +13,7 @@ var createBoard = function(lifeStatusArray) {
 var startPattern = function() {
   var lifeStatus = [];
   for (var i = 0; i < 100; i++) {
-    if ((i < 44 || (i > 46 && i < 53) || i > 55)) {
+    if ((i > 43 && i < 47) || (i > 52 && i < 56)) {
       lifeStatus.push('alive');
     } else {
       lifeStatus.push('dead');
