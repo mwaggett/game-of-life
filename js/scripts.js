@@ -1,78 +1,135 @@
-var createBoard = function() {
+var createBoard = function(lifeStatusArray) {
   for (var row = 0; row < 10; row++) {
     $("#game tbody").append("<tr>");
     for (var column = 0; column < 10; column++) {
-      if (column === row) { // Condition for starting pattern
-        var status = 'live';
-      } else {
-        var status = 'dead';
-      }
       var id = 10*row + column;
+      var status = lifeStatusArray[id];
       $("#game tbody").append("<td id='"+id+"' class='"+status+"'></td>");
     }
     $("#game tbody").append("</tr>");
   }
 }
 
-var findNeighbors = function(cellId) {
-  return [cellId-11, cellId-10, cellId-9, cellId-1, cellId+1, cellId+9, cellId+10, cellId+11];
+var startPattern = function() {
+  var lifeStatus = [];
+  for (var i = 0; i < 100; i++) {
+    if ((i < 44 || (i > 46 && i < 53) || i > 55)) {
+      lifeStatus.push('alive');
+    } else {
+      lifeStatus.push('dead');
+    }
+  }
+  return lifeStatus;
 }
 
-var isAlive = function(cellId) {
-  return $("#"+cellId).hasClass("live");
+var findNeighbors = function(cellId) { // for 10x10 board
+  var possibleNeighbors = [cellId-11, cellId-10, cellId-9, cellId-1, cellId+1, cellId+9, cellId+10, cellId+11];
+  var actualNeighbors = [];
+  for (var index in possibleNeighbors) {
+    if (possibleNeighbors[index] >= 0 && possibleNeighbors[index] < 100) {
+      actualNeighbors.push(possibleNeighbors[index]);
+    }
+  }
+  return actualNeighbors;
 }
 
-var isDead = function(cellId) {
-  return $("#"+cellId).hasClass("dead");
+var isAlive = function(cellId, statusArray) {
+  return statusArray[cellId] === "alive";
 }
 
-var liveNeighbors = function(cellId) {
+var isDead = function(cellId, statusArray) {
+  return statusArray[cellId] === "dead";
+}
+
+var liveNeighbors = function(cellId, statusArray) {
   var neighbors = findNeighbors(cellId);
-  var alive = 0;
+  var livingNeighbors = 0;
   for (var index in neighbors) {
-    if (isAlive(neighbors[index])) {
-      alive++;
+    if (isAlive(neighbors[index], statusArray)) {
+      livingNeighbors++;
     }
   }
-  return alive;
+  return livingNeighbors;
 }
 
-var willDie = function(cellId) {
-  var livingNeighbors = liveNeighbors(cellId);
-  return livingNeighbors < 2 || livingNeighbors > 3;
+var willDie = function(cellId, statusArray) {
+  var livingNeighbors = liveNeighbors(cellId, statusArray);
+  return isAlive(cellId, statusArray) && (livingNeighbors < 2 || livingNeighbors > 3);
 }
 
-var willReturnFromDead = function(cellId) {
-  var livingNeighbors = liveNeighbors(cellId);
-  return livingNeighbors === 3;
+var willReturnFromDead = function(cellId, statusArray) {
+  var livingNeighbors = liveNeighbors(cellId, statusArray);
+  return isDead(cellId, statusArray) && (livingNeighbors === 3);
 }
 
-var anyLivingCells = function() {
-  for (var cellId = 0; cellId < 100; cellId++) {
-    if (isAlive(cellId)) {
-      return true;
+var kill = function(cellId, statusArray) {
+  statusArray[cellId] = "dead";
+}
+
+var revive = function(cellId, statusArray) {
+  statusArray[cellId] = "alive";
+}
+
+var lifeCycle = function(statusArray) {
+  var toRevive = [];
+  var toKill = [];
+
+  for (var index in statusArray) {
+    if (willDie(index, statusArray)) {
+      toKill.push[index];
+    } else if (willReturnFromDead(index, statusArray)) {
+      toRevive.push[index];
     }
   }
-  return false;
+
+  for (var index in statusArray) {
+    for (var killIndex in toKill) {
+      if (index === toKill[killIndex]) {
+        kill(index, statusArray);
+      }
+    }
+    for (var reviveIndex in toRevive) {
+      if (index === toRevive[reviveIndex]) {
+        revive(index, statusArray);
+      }
+    }
+  }
+  return statusArray;
 }
+
+// var anyLivingCells = function() {
+//   for (var cellId = 0; cellId < 100; cellId++) {
+//     if (isAlive(cellId)) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
 
 $(document).ready(function() {
-  createBoard();
-//  while (anyLivingCells()) {
-debugger;
-    $("td.live").each(function() {
-      var id = $(this).attr('id');
-      if (willDie(id)) {
-        $(this).removeClass("live").addClass("dead");
-      }
-    });
-    $("td.dead").each(function() {
+  var lifeStatus = startPattern();
+  createBoard(lifeStatus);
 
-      var id = $(this).attr('id');
-      if (willReturnFromDead(id)) {
-        $(this).removeClass("dead").addClass("live");
-      }
-    });
+  $("#cycle").click(function() {
+    lifeStatus = lifeCycle(lifeStatus);
+    $("tbody").empty();
+    createBoard(lifeStatus);
+  });
+
+//  while (anyLivingCells()) {
+    // $(".live").each(function() {
+    //   var id = $(this).attr('id');
+    //   if (willDie(id)) {
+    //     $(this).removeClass("alive").addClass("dead");
+    //   }
+    // });
+    // $(".dead").each(function() {
+    //
+    //   var id = $(this).attr('id');
+    //   if (willReturnFromDead(id)) {
+    //     $(this).removeClass("dead").addClass("alive");
+    //   }
+    // });
 //  }
 });
